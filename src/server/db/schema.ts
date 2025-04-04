@@ -1,3 +1,5 @@
+import "server-only"; // Ensure this file is only imported on the server side
+
 import { int, bigint, text, singlestoreTable, index, singlestoreTableCreator } from "drizzle-orm/singlestore-core";
 import { url } from "inspector";
 
