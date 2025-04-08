@@ -16,8 +16,9 @@ export default async function GoogleDriveClone(props: { params: Promise<{ folder
     }
 
 
-    const folders = await db.select().from(folderSchema).where(eq(folderSchema.parent, parsedFolderId));
-    const files = await db.select().from(fileSchema).where(eq(fileSchema.parent, parsedFolderId));
-    console.log("Files:", files);
+    const foldersPromise = await db.select().from(folderSchema).where(eq(folderSchema.parent, parsedFolderId));
+    const filesPromise = await db.select().from(fileSchema).where(eq(fileSchema.parent, parsedFolderId));
+   
+    const [folders, files] = await Promise.all([foldersPromise, filesPromise]);
     return <DriveContents files={files} folders={folders} />;
 }
