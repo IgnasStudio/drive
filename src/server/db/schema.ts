@@ -1,9 +1,6 @@
-
-import { int, bigint, text, singlestoreTable, index, singlestoreTableCreator, timestamp } from "drizzle-orm/singlestore-core";
-import { url } from "inspector";
+import { int, bigint, text, index, singlestoreTableCreator, timestamp } from "drizzle-orm/singlestore-core";
 
 export const createTable = singlestoreTableCreator((name) => `drive_${name}`);
-
 
 export const files_table = createTable("files_table", {
   id: bigint("id", { mode: "number", unsigned: true}).primaryKey().autoincrement(),

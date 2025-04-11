@@ -1,6 +1,6 @@
 "use client";
 
-import {  Upload, ChevronRight } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 import { FileRow, FolderRow } from "./file-row"
 import type { files_table, folders_table } from "~/server/db/schema"
 import Link from "next/link";
@@ -28,7 +28,7 @@ export default function DriveContents(props: {
             >
               My Drive
             </Link>
-            {props.parents?.map((folder, index) => (
+            {props.parents?.map((folder, _index) => (
               <div key={folder.id} className="flex items-center">
                 <ChevronRight className="mx-2 text-gray-500" size={16} />
                 <Link
