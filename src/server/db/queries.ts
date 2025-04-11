@@ -38,10 +38,10 @@ export const QUERIES = {
     return db
       .select()
       .from(folderSchema)
-      .where(eq(folderSchema.parent, folderId));
+      .where(eq(folderSchema.parent, folderId)).orderBy(folderSchema.id);
   },
   getFiles: function (folderId: number) {
-    return db.select().from(fileSchema).where(eq(fileSchema.parent, folderId));
+    return db.select().from(fileSchema).where(eq(fileSchema.parent, folderId)).orderBy(fileSchema.id);
   },
 };
 
