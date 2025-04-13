@@ -3,6 +3,7 @@ import Link from "next/link"
 import { Button } from "~/components/ui/button"
 import { deleteFile, deleteFolder } from "~/server/actions"
 import type { files_table, folders_table } from "~/server/db/schema"
+import { formatFileSize } from "~/lib/utils"
 
 export function FileRow(props: { file: typeof files_table.$inferSelect }) {
     const { file } = props
@@ -16,7 +17,7 @@ export function FileRow(props: { file: typeof files_table.$inferSelect }) {
               </a>
           </div>
           <div className="col-span-2 text-gray-500">{"file"}</div>
-        <div className="col-span-3 text-gray-500">{file.size}</div>
+        <div className="col-span-3 text-gray-500">{formatFileSize(file.size)}</div>
         <div className="col-span-1 text-gray-500">
           <Button
             variant="ghost"
