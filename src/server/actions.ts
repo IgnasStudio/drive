@@ -31,13 +31,9 @@ export async function deleteFile(fileId: number) {
       file.url.replace("https://alwhlxyk0i.ufs.sh/f/", ""),
     ]);
 
-    console.log(utapiResult);
-
     const dbDeleteResult = await db
       .delete(files_table)
       .where(eq(files_table.id, fileId));
-
-    console.log(dbDeleteResult);
 
     // Hack to update the content on the page
     const c = await cookies();
@@ -74,5 +70,76 @@ export async function createFolder(name: string, parentId: number) {
   } catch (error) {
     console.error("Error creating folder:", error);
     return { error: "Failed to create folder" };
+  }
+}
+
+export async function deleteFolder(folderId: number) {
+  const session = await auth();
+  if (!session.userId) {
+    return { error: "Unauthorized" };
+  }
+
+  try {
+    // Check if folder exists and belongs to current user
+    const [folder] = await db
+      .select()
+      .from(folders_table)
+      .where(
+        and(eq(folders_table.id, folderId), eq(folders_table.ownerId, session.userId)),
+      );
+
+    if (!folder) {
+      return { error: "Folder not found" };
+    }
+
+    // Function to recursively delete folders and their contents
+    async function deleteRecursively(currentFolderId: number) {
+      // Get all subfolders in this folder
+      const subfolders = await db
+        .select()
+        .from(folders_table)
+        .where(eq(folders_table.parent, currentFolderId));
+      
+      // Recursively delete each subfolder and its contents
+      for (const subfolder of subfolders) {
+        await deleteRecursively(subfolder.id);
+      }
+
+      // Delete all files in this folder
+      const filesToDelete = await db
+        .select()
+        .from(files_table)
+        .where(eq(files_table.parent, currentFolderId));
+      
+      // Delete files from uploadthing if there are any
+      if (filesToDelete.length > 0) {
+        const fileKeys = filesToDelete.map(file => 
+          file.url.replace("https://alwhlxyk0i.ufs.sh/f/", "")
+        );
+        await utApi.deleteFiles(fileKeys);
+      }
+
+      // Delete all files from database
+      await db
+        .delete(files_table)
+        .where(eq(files_table.parent, currentFolderId));
+      
+      // Delete this folder from database
+      await db
+        .delete(folders_table)
+        .where(eq(folders_table.id, currentFolderId));
+    }
+    
+    // Start the recursive deletion process
+    await deleteRecursively(folderId);
+
+    // Hack to update the content on the page
+    const c = await cookies();
+    c.set("force-refresh", JSON.stringify(Math.random()));
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting folder:", error);
+    return { error: "Failed to delete folder" };
   }
 }
