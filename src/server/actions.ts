@@ -9,7 +9,7 @@ import { cookies } from "next/headers";
 
 const utApi = new UTApi();
 
-export async function deleteFile(fileId: number) {
+export async function deleteFile(fileKey: string) {
   const session = await auth();
   if (!session.userId) {
     return { error: "Unauthorized" };
@@ -20,20 +20,18 @@ export async function deleteFile(fileId: number) {
       .select()
       .from(files_table)
       .where(
-        and(eq(files_table.id, fileId), eq(files_table.ownerId, session.userId)),
+        and(eq(files_table.fileKey, fileKey), eq(files_table.ownerId, session.userId)),
       );
 
     if (!file) {
       return { error: "File not found" };
     }
 
-    const utapiResult = await utApi.deleteFiles([
-      file.url.replace("https://alwhlxyk0i.ufs.sh/f/", ""),
-    ]);
+    const utapiResult = await utApi.deleteFiles(fileKey);
 
     const dbDeleteResult = await db
       .delete(files_table)
-      .where(eq(files_table.id, fileId));
+      .where(eq(files_table.fileKey, fileKey));
 
     // Hack to update the content on the page
     const c = await cookies();
@@ -114,7 +112,7 @@ export async function deleteFolder(folderId: number) {
       // Delete files from uploadthing if there are any
       if (filesToDelete.length > 0) {
         const fileKeys = filesToDelete.map(file => 
-          file.url.replace("https://alwhlxyk0i.ufs.sh/f/", "")
+          file.fileKey
         );
         await utApi.deleteFiles(fileKeys);
       }

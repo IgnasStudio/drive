@@ -20,7 +20,7 @@ export function FileRow(props: { file: typeof files_table.$inferSelect }) {
         <div className="col-span-1 text-gray-500">
           <Button
             variant="ghost"
-            onClick={() => deleteFile(file.id)}
+            onClick={() => deleteFile(file.fileKey)}
             aria-label="Delete file"
             className="hover:text-green-600 hover:bg-green-50"
           >

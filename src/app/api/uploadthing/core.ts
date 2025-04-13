@@ -33,7 +33,8 @@ export const ourFileRouter = {
     })
     .onUploadComplete(async ({ metadata, file }) => {
       console.log("Upload complete for userId:", metadata.userId);
-
+      console.log("metadata", metadata);
+      console.log("file", file);
       console.log("file url", file.ufsUrl);
       await MUTATIONS.createFile({
         file: {
@@ -41,6 +42,7 @@ export const ourFileRouter = {
             size: file.size,
             url: file.ufsUrl,
             parent: metadata.parentId, 
+            fileKey: file.key, // This is the key that Uploadthing uses to identify the file
             },
             userId: metadata.userId,
         });
