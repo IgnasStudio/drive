@@ -1,0 +1,21 @@
+/* Base button styles */
+.customUploadButton [data-ut-element="button"] {
+  background: linear-gradient(to right, #22c55e, #059669);
+  color: white;
+  font-weight: 500;
+}
+
+/* Button hover state */
+.customUploadButton [data-ut-element="button"]:hover {
+  background: linear-gradient(to right, #1eb874, #047857) !important;
+}
+
+/* Button uploading state */
+.customUploadButton [data-ut-element="button"][data-state="uploading"] {
+  background: linear-gradient(to right, #1eb874, #047857) !important;
+}
+
+/* Upload progress indicator */
+.customUploadButton [data-ut-element="button"][data-state="uploading"]::after {
+    background: linear-gradient(to right, #1eb874, #047857) !important;
+}

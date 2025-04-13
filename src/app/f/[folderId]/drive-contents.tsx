@@ -5,11 +5,11 @@ import { FileRow, FolderRow } from "./file-row"
 import type { files_table, folders_table } from "~/server/db/schema"
 import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
-import { UploadButton } from "~/components/uploadthing";
 import { useRouter } from "next/navigation";
 import { createFolder } from "~/server/actions";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
+import { CustomUploadButton } from "~/components/custom-upload-button";
 
 export default function DriveContents(props: {
   files: (typeof files_table.$inferSelect)[];
@@ -81,42 +81,42 @@ export default function DriveContents(props: {
           </ul>
         </div>
         <div className="mt-6 flex justify-center">
-          <UploadButton 
-            endpoint="imageUploader" 
-            onClientUploadComplete={() => {
-              navigate.refresh();
-            }} 
-            input={{ folderId: props.currentFolderId }}
-            appearance={{
-              button: {
-                backgroundColor: "#10b981",
-                background: "linear-gradient(to right, #22c55e, #059669)",
-              }
-            }}
-          />
+          <CustomUploadButton folderId={props.currentFolderId} />
         </div>
         <div className="mt-6 flex justify-center">
-          <Button onClick={() => setIsDialogOpen(true)}>
+          <Button 
+            onClick={() => setIsDialogOpen(true)}
+            className="bg-gradient-to-r from-[#22c55e] to-[#059669] hover:from-[#1eb874] hover:to-[#047857] text-white"
+          >
             <FolderPlus className="mr-2" size={16} />
             New Folder
           </Button>
         </div>
         {isDialogOpen && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <h2 className="text-lg font-medium mb-4">Create New Folder</h2>
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
+              <h2 className="text-lg font-medium mb-4 text-gray-800">Create New Folder</h2>
               <input
                 type="text"
                 value={newFolderName}
                 onChange={(e) => setNewFolderName(e.target.value)}
-                className="border border-gray-300 rounded-lg p-2 mb-4 w-full"
+                className="border border-gray-300 rounded-lg p-2 mb-4 w-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 placeholder="Folder Name"
+                autoFocus
               />
               <div className="flex justify-end">
-                <Button onClick={() => setIsDialogOpen(false)} className="mr-2">
+                <Button 
+                  onClick={() => setIsDialogOpen(false)} 
+                  variant="outline"
+                  className="mr-2 border-gray-300 hover:bg-gray-50"
+                >
                   Cancel
                 </Button>
-                <Button onClick={handleCreateFolder} disabled={!newFolderName}>
+                <Button 
+                  onClick={handleCreateFolder} 
+                  disabled={!newFolderName}
+                  className="bg-gradient-to-r from-[#22c55e] to-[#059669] hover:from-[#1eb874] hover:to-[#047857] text-white"
+                >
                   Create
                 </Button>
               </div>
