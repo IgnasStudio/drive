@@ -18,7 +18,7 @@ export default function DriveContents(props: {
   const navigate = useRouter();
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 text-gray-800 p-8 h-full">
+    <div className=" text-gray-800 p-8 h-full w-full">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center">
