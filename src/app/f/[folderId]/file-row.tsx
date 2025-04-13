@@ -4,9 +4,35 @@ import { Button } from "~/components/ui/button"
 import { deleteFile, deleteFolder } from "~/server/actions"
 import type { files_table, folders_table } from "~/server/db/schema"
 import { formatFileSize } from "~/lib/utils"
+import { useEffect, useRef, useState } from "react"
 
 export function FileRow(props: { file: typeof files_table.$inferSelect }) {
     const { file } = props
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+    const cancelButtonRef = useRef<HTMLButtonElement>(null)
+    
+    // Handle ESC key press to close modal
+    useEffect(() => {
+        if (!isDeleteModalOpen) return
+        
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape") {
+                setIsDeleteModalOpen(false)
+            }
+        }
+        
+        window.addEventListener("keydown", handleKeyDown)
+        
+        // Focus on cancel button when modal opens
+        if (cancelButtonRef.current) {
+            cancelButtonRef.current.focus()
+        }
+        
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown)
+        }
+    }, [isDeleteModalOpen])
+    
     return (
         <li key={file.id} className="px-6 py-4 border-b border-gray-200 hover:bg-gray-100">
         <div className="grid grid-cols-12 gap-4 items-center">
@@ -21,7 +47,7 @@ export function FileRow(props: { file: typeof files_table.$inferSelect }) {
         <div className="col-span-1 text-gray-500">
           <Button
             variant="ghost"
-            onClick={() => deleteFile(file.fileKey)}
+            onClick={() => setIsDeleteModalOpen(true)}
             aria-label="Delete file"
             className="hover:text-green-600 hover:bg-green-50"
           >
@@ -29,12 +55,72 @@ export function FileRow(props: { file: typeof files_table.$inferSelect }) {
           </Button>
         </div>
         </div>
+        
+        {isDeleteModalOpen && (
+          <div 
+            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+            role="dialog"
+            aria-labelledby="delete-file-title"
+            aria-modal="true"
+          >
+            <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+              <h2 id="delete-file-title" className="text-lg font-medium mb-4 text-gray-800">Delete File</h2>
+              <p className="mb-4 text-gray-600">
+                Are you sure you want to delete this file? This action cannot be undone.
+              </p>
+              <div className="flex justify-end">
+                <Button
+                  ref={cancelButtonRef}
+                  onClick={() => setIsDeleteModalOpen(false)}
+                  variant="outline"
+                  className="mr-2 border-gray-300 hover:bg-gray-50"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => {
+                    deleteFile(file.fileKey);
+                    setIsDeleteModalOpen(false);
+                  }}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                >
+                  Delete
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </li>
     )
 }
 
 export function FolderRow(props: { folder: typeof folders_table.$inferSelect}) {
     const { folder } = props
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+    const cancelButtonRef = useRef<HTMLButtonElement>(null)
+    
+    // Handle ESC key press to close modal
+    useEffect(() => {
+        if (!isDeleteModalOpen) return
+        
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape") {
+                setIsDeleteModalOpen(false)
+            }
+        }
+        
+        window.addEventListener("keydown", handleKeyDown)
+        
+        // Focus on cancel button when modal opens
+        if (cancelButtonRef.current) {
+            cancelButtonRef.current.focus()
+        }
+        
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown)
+        }
+    }, [isDeleteModalOpen])
+    
     return (
         <li key={folder.id} className="px-6 py-4 border-b border-gray-200 hover:bg-gray-100">
         <div className="grid grid-cols-12 gap-4 items-center">
@@ -52,7 +138,7 @@ export function FolderRow(props: { folder: typeof folders_table.$inferSelect}) {
           <div className="col-span-1 text-gray-500">
             <Button
               variant="ghost"
-              onClick={() => deleteFolder(folder.id)}
+              onClick={() => setIsDeleteModalOpen(true)}
               aria-label="Delete folder"
               className="hover:text-green-600 hover:bg-green-50"
             >
@@ -60,6 +146,41 @@ export function FolderRow(props: { folder: typeof folders_table.$inferSelect}) {
             </Button>
           </div>
         </div>
+        
+        {isDeleteModalOpen && (
+          <div 
+            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+            role="dialog"
+            aria-labelledby="delete-folder-title"
+            aria-modal="true"
+          >
+            <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+              <h2 id="delete-folder-title" className="text-lg font-medium mb-4 text-gray-800">Delete Folder</h2>
+              <p className="mb-4 text-gray-600">
+                Are you sure you want to delete this folder? This action will also delete all files and folders inside it and cannot be undone.
+              </p>
+              <div className="flex justify-end">
+                <Button
+                  ref={cancelButtonRef}
+                  onClick={() => setIsDeleteModalOpen(false)}
+                  variant="outline"
+                  className="mr-2 border-gray-300 hover:bg-gray-50"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => {
+                    deleteFolder(folder.id);
+                    setIsDeleteModalOpen(false);
+                  }}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                >
+                  Delete
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </li>
     )
 }

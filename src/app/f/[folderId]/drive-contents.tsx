@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, FolderPlus } from "lucide-react"
+import { ChevronRight, FolderPlus, ChevronLeft } from "lucide-react"
 import { FileRow, FolderRow } from "./file-row"
 import type { files_table, folders_table } from "~/server/db/schema"
 import Link from "next/link";
@@ -22,6 +22,14 @@ export default function DriveContents(props: {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
 
+  // Find the parent folder for the back button
+  // Ensure we have a valid parent folder
+  const parentFolder = props.parents.length > 1 
+    ? props.parents[props.parents.length - 2] 
+    : props.parents[0] || null;
+    
+  const isRootFolder = props.parents.length <= 1;
+  
   const handleCreateFolder = async () => {
     await createFolder(newFolderName, props.currentFolderId);
     setIsDialogOpen(false);
@@ -63,6 +71,21 @@ export default function DriveContents(props: {
             </SignedIn>
           </div>
         </div>
+
+        {/* Back button container - always maintains its height */}
+        <div className="mb-4 h-10">
+          {!isRootFolder && parentFolder && (
+            <Button
+              variant="outline"
+              className="flex items-center border-gray-300 hover:bg-gray-50"
+              onClick={() => parentFolder && navigate.push(`/f/${parentFolder.id}`)}
+            >
+              <ChevronLeft className="mr-1" size={18} />
+              Back to {parentFolder.name}
+            </Button>
+          )}
+        </div>
+
         <div className="bg-white bg-opacity-90 rounded-lg shadow-md border border-gray-100">
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="grid grid-cols-12 gap-4 text-sm font-medium text-gray-500">
@@ -94,9 +117,14 @@ export default function DriveContents(props: {
           </Button>
         </div>
         {isDialogOpen && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div 
+            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+            role="dialog"
+            aria-labelledby="create-folder-title"
+            aria-modal="true"
+          >
             <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
-              <h2 className="text-lg font-medium mb-4 text-gray-800">Create New Folder</h2>
+              <h2 id="create-folder-title" className="text-lg font-medium mb-4 text-gray-800">Create New Folder</h2>
               <input
                 type="text"
                 value={newFolderName}
@@ -104,6 +132,13 @@ export default function DriveContents(props: {
                 className="border border-gray-300 rounded-lg p-2 mb-4 w-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 placeholder="Folder Name"
                 autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
+                    setIsDialogOpen(false);
+                  } else if (e.key === "Enter" && newFolderName) {
+                    handleCreateFolder();
+                  }
+                }}
               />
               <div className="flex justify-end">
                 <Button 
