@@ -18,7 +18,7 @@ export default function DriveContents(props: {
   const navigate = useRouter();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 text-gray-800 p-8">
+    <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 text-gray-800 p-8 h-full">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center">
@@ -82,9 +82,6 @@ export default function DriveContents(props: {
             }}
           />
         </div>
-        <footer className="mt-16 text-center text-sm text-gray-400">
-          © {new Date().getFullYear()} Ignas Studio Drive
-        </footer>
       </div>
     </div>
   )
