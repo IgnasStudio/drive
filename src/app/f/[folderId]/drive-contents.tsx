@@ -18,13 +18,13 @@ export default function DriveContents(props: {
   const navigate = useRouter();
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 text-gray-800 p-8">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center">
             <Link
               href="/f/1"
-              className="text-gray-300 hover:text-white mr-2"
+              className="text-gray-800 hover:text-green-600 mr-2 font-medium"
             >
               My Drive
             </Link>
@@ -33,7 +33,7 @@ export default function DriveContents(props: {
                 <ChevronRight className="mx-2 text-gray-500" size={16} />
                 <Link
                   href={`/f/${folder.id}`}
-                  className="text-gray-300 hover:text-white"
+                  className="text-gray-800 hover:text-green-600 font-medium"
                 >
                   {folder.name}
                 </Link>
@@ -50,15 +50,15 @@ export default function DriveContents(props: {
             </SignedIn>
           </div>
         </div>
-        <div className="bg-gray-800 rounded-lg shadow-xl">
-          <div className="px-6 py-4 border-b border-gray-700">
-            <div className="grid grid-cols-12 gap-4 text-sm font-medium text-gray-400">
+        <div className="bg-white bg-opacity-90 rounded-lg shadow-md border border-gray-100">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <div className="grid grid-cols-12 gap-4 text-sm font-medium text-gray-500">
               <div className="col-span-6">Name</div>
               <div className="col-span-3">Type</div>
               <div className="col-span-3">Size</div>
             </div>
           </div>
-          <ul>
+          <ul className="rounded-b-lg overflow-hidden">
           {props.folders.map((folder) => (
               <FolderRow key={folder.id} folder={folder} />
             ))}
@@ -67,11 +67,24 @@ export default function DriveContents(props: {
             ))}
           </ul>
         </div>
-        <UploadButton endpoint="imageUploader" onClientUploadComplete={() => {
-          navigate.refresh();
-        }} 
-        input={{ folderId: props.currentFolderId }}
-        />
+        <div className="mt-6 flex justify-center">
+          <UploadButton 
+            endpoint="imageUploader" 
+            onClientUploadComplete={() => {
+              navigate.refresh();
+            }} 
+            input={{ folderId: props.currentFolderId }}
+            appearance={{
+              button: {
+                backgroundColor: "#10b981",
+                background: "linear-gradient(to right, #22c55e, #059669)",
+              }
+            }}
+          />
+        </div>
+        <footer className="mt-16 text-center text-sm text-gray-400">
+          © {new Date().getFullYear()} Ignas Studio Drive
+        </footer>
       </div>
     </div>
   )
