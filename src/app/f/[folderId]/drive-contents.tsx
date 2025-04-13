@@ -1,12 +1,15 @@
 "use client";
 
-import { ChevronRight } from "lucide-react"
+import { ChevronRight, FolderPlus } from "lucide-react"
 import { FileRow, FolderRow } from "./file-row"
 import type { files_table, folders_table } from "~/server/db/schema"
 import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { UploadButton } from "~/components/uploadthing";
 import { useRouter } from "next/navigation";
+import { createFolder } from "~/server/actions";
+import { useState } from "react";
+import { Button } from "~/components/ui/button";
 
 export default function DriveContents(props: {
   files: (typeof files_table.$inferSelect)[];
@@ -16,14 +19,24 @@ export default function DriveContents(props: {
   currentFolderId: number;
 }) {
   const navigate = useRouter();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [newFolderName, setNewFolderName] = useState("");
+
+  const handleCreateFolder = async () => {
+    await createFolder(newFolderName, props.currentFolderId);
+    setIsDialogOpen(false);
+    setNewFolderName("");
+    navigate.refresh();
+  };
 
   return (
     <div className=" text-gray-800 p-8 h-full w-full">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center">
+           {/* My Drive will always lead to the first parent, which is the root folder */}
             <Link
-              href="/f/1"
+              href={`/f/${props.parents[0]?.id}`}
               className="text-gray-800 hover:text-green-600 mr-2 font-medium"
             >
               My Drive
@@ -82,6 +95,34 @@ export default function DriveContents(props: {
             }}
           />
         </div>
+        <div className="mt-6 flex justify-center">
+          <Button onClick={() => setIsDialogOpen(true)}>
+            <FolderPlus className="mr-2" size={16} />
+            New Folder
+          </Button>
+        </div>
+        {isDialogOpen && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <h2 className="text-lg font-medium mb-4">Create New Folder</h2>
+              <input
+                type="text"
+                value={newFolderName}
+                onChange={(e) => setNewFolderName(e.target.value)}
+                className="border border-gray-300 rounded-lg p-2 mb-4 w-full"
+                placeholder="Folder Name"
+              />
+              <div className="flex justify-end">
+                <Button onClick={() => setIsDialogOpen(false)} className="mr-2">
+                  Cancel
+                </Button>
+                <Button onClick={handleCreateFolder} disabled={!newFolderName}>
+                  Create
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
