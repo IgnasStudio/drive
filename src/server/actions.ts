@@ -27,9 +27,11 @@ export async function deleteFile(fileKey: string) {
       return { error: "File not found" };
     }
 
-    const utapiResult = await utApi.deleteFiles(fileKey);
+    // Delete file from uploadthing
+    await utApi.deleteFiles(fileKey);
 
-    const dbDeleteResult = await db
+    // Delete file from database
+    await db
       .delete(files_table)
       .where(eq(files_table.fileKey, fileKey));
 

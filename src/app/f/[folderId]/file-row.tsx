@@ -78,8 +78,8 @@ export function FileRow(props: { file: typeof files_table.$inferSelect }) {
                   Cancel
                 </Button>
                 <Button
-                  onClick={() => {
-                    deleteFile(file.fileKey);
+                  onClick={async () => {
+                    await deleteFile(file.fileKey);
                     setIsDeleteModalOpen(false);
                   }}
                   className="bg-red-600 hover:bg-red-700 text-white"
@@ -169,8 +169,8 @@ export function FolderRow(props: { folder: typeof folders_table.$inferSelect}) {
                   Cancel
                 </Button>
                 <Button
-                  onClick={() => {
-                    deleteFolder(folder.id);
+                  onClick={async () => {
+                    await deleteFolder(folder.id);
                     setIsDeleteModalOpen(false);
                   }}
                   className="bg-red-600 hover:bg-red-700 text-white"

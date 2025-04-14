@@ -26,7 +26,7 @@ export default function DriveContents(props: {
   // Ensure we have a valid parent folder
   const parentFolder = props.parents.length > 1 
     ? props.parents[props.parents.length - 2] 
-    : props.parents[0] || null;
+    : props.parents[0] ?? null;
     
   const isRootFolder = props.parents.length <= 1;
   
@@ -132,11 +132,11 @@ export default function DriveContents(props: {
                 className="border border-gray-300 rounded-lg p-2 mb-4 w-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 placeholder="Folder Name"
                 autoFocus
-                onKeyDown={(e) => {
+                onKeyDown={async (e) => {
                   if (e.key === "Escape") {
                     setIsDialogOpen(false);
                   } else if (e.key === "Enter" && newFolderName) {
-                    handleCreateFolder();
+                    await handleCreateFolder();
                   }
                 }}
               />
@@ -149,7 +149,7 @@ export default function DriveContents(props: {
                   Cancel
                 </Button>
                 <Button 
-                  onClick={handleCreateFolder} 
+                  onClick={async () => await handleCreateFolder()} 
                   disabled={!newFolderName}
                   className="bg-gradient-to-r from-[#22c55e] to-[#059669] hover:from-[#1eb874] hover:to-[#047857] text-white"
                 >
