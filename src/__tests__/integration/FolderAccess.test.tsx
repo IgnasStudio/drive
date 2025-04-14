@@ -15,6 +15,10 @@ jest.mock('~/server/db/queries', () => ({
   },
 }));
 
+// Use proper typing for mocks
+const mockAuth = auth as unknown as jest.Mock;
+const mockRedirect = redirect as unknown as jest.Mock;
+
 jest.mock('@clerk/nextjs/server', () => ({ auth: jest.fn() }));
 jest.mock('next/navigation', () => ({ redirect: jest.fn() }));
 
@@ -31,24 +35,28 @@ describe('Folder Access Tests', () => {
   beforeEach(() => jest.clearAllMocks());
 
   it('redirects to sign-in for unauthenticated users', async () => {
-    (auth as jest.Mock).mockResolvedValue({ userId: null });
+    mockAuth.mockResolvedValue({ userId: null });
     
-    await IgnasStudioDrive({ params: Promise.resolve({ folderId: '1' }) });
+    await IgnasStudioDrive({ 
+      params: Promise.resolve({ folderId: '1' }) 
+    });
     
-    expect(redirect).toHaveBeenCalledWith('/sign-in');
+    expect(mockRedirect).toHaveBeenCalledWith('/sign-in');
   });
 
   it('shows access denied for non-existent folders', async () => {
-    (auth as jest.Mock).mockResolvedValue({ userId });
+    mockAuth.mockResolvedValue({ userId });
     (QUERIES.getFolderById as jest.Mock).mockResolvedValue(null);
     
-    render(await IgnasStudioDrive({ params: Promise.resolve({ folderId: '999' }) }));
+    render(await IgnasStudioDrive({ 
+      params: Promise.resolve({ folderId: '999' }) 
+    }));
     
     expect(screen.getByText('Access Denied')).toBeInTheDocument();
   });
 
   it('shows access denied when user is not folder owner', async () => {
-    (auth as jest.Mock).mockResolvedValue({ userId });
+    mockAuth.mockResolvedValue({ userId });
     (QUERIES.getFolderById as jest.Mock).mockResolvedValue({
       id: 1,
       name: 'Test Folder',
@@ -56,14 +64,16 @@ describe('Folder Access Tests', () => {
       parent: null,
     });
     
-    render(await IgnasStudioDrive({ params: Promise.resolve({ folderId: '1' }) }));
+    render(await IgnasStudioDrive({ 
+      params: Promise.resolve({ folderId: '1' }) 
+    }));
     
     expect(screen.getByText('Access Denied')).toBeInTheDocument();
   });
 
   it('displays folder contents for authorized owner', async () => {
     // Set up auth and folder ownership
-    (auth as jest.Mock).mockResolvedValue({ userId });
+    mockAuth.mockResolvedValue({ userId });
     (QUERIES.getFolderById as jest.Mock).mockResolvedValue({
       id: 1, 
       name: 'My Files',
@@ -76,7 +86,9 @@ describe('Folder Access Tests', () => {
     (QUERIES.getFiles as jest.Mock).mockResolvedValue([]);
     (QUERIES.getAllParentsForFolder as jest.Mock).mockResolvedValue([]);
     
-    render(await IgnasStudioDrive({ params: Promise.resolve({ folderId: '1' }) }));
+    render(await IgnasStudioDrive({ 
+      params: Promise.resolve({ folderId: '1' }) 
+    }));
     
     expect(screen.getByTestId('drive-contents')).toBeInTheDocument();
     expect(screen.queryByText('Access Denied')).not.toBeInTheDocument();

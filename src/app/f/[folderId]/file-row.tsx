@@ -34,38 +34,38 @@ export function FileRow(props: { file: typeof files_table.$inferSelect }) {
     }, [isDeleteModalOpen])
     
     return (
-        <li key={file.id} className="px-6 py-4 border-b border-gray-200 hover:bg-gray-100">
-        <div className="grid grid-cols-12 gap-4 items-center">
-          <div className="col-span-6 flex items-center">
-              <a href={file.url} target="_blank" className="flex items-center text-gray-800 hover:text-green-600">
-                <FileIcon className="mr-3 text-gray-500" size={20} />
-                {file.name}
+        <li key={file.id} className="px-3 sm:px-6 py-3 sm:py-4 border-b border-gray-200 hover:bg-gray-100">
+        <div className="grid grid-cols-12 gap-2 sm:gap-4 items-center">
+          <div className="col-span-6 flex items-center min-w-0">
+              <a href={file.url} target="_blank" className="flex items-center text-gray-800 hover:text-green-600 truncate">
+                <FileIcon className="mr-2 sm:mr-3 flex-shrink-0 text-gray-500" size={18} />
+                <span className="truncate text-sm sm:text-base">{file.name}</span>
               </a>
           </div>
-          <div className="col-span-2 text-gray-500">{"file"}</div>
-        <div className="col-span-3 text-gray-500">{formatFileSize(file.size)}</div>
-        <div className="col-span-1 text-gray-500">
-          <Button
-            variant="ghost"
-            onClick={() => setIsDeleteModalOpen(true)}
-            aria-label="Delete file"
-            className="hover:text-green-600 hover:bg-green-50"
-          >
-            <Trash2Icon size={20} />
-          </Button>
-        </div>
+          <div className="col-span-2 text-gray-500 text-xs sm:text-sm hidden sm:block">{"file"}</div>
+          <div className="col-span-4 sm:col-span-3 text-gray-500 text-xs sm:text-sm">{formatFileSize(file.size)}</div>
+          <div className="col-span-2 sm:col-span-1 text-gray-500 flex justify-end sm:justify-start">
+            <Button
+              variant="ghost"
+              onClick={() => setIsDeleteModalOpen(true)}
+              aria-label="Delete file"
+              className="hover:text-green-600 hover:bg-green-50 p-1 sm:p-2 h-auto"
+            >
+              <Trash2Icon size={18} />
+            </Button>
+          </div>
         </div>
         
         {isDeleteModalOpen && (
           <div 
-            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 px-4"
             role="dialog"
             aria-labelledby="delete-file-title"
             aria-modal="true"
           >
-            <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-              <h2 id="delete-file-title" className="text-lg font-medium mb-4 text-gray-800">Delete File</h2>
-              <p className="mb-4 text-gray-600">
+            <div className="bg-white p-4 sm:p-6 rounded-lg shadow-lg w-full max-w-md">
+              <h2 id="delete-file-title" className="text-base sm:text-lg font-medium mb-3 sm:mb-4 text-gray-800">Delete File</h2>
+              <p className="mb-4 text-sm sm:text-base text-gray-600">
                 Are you sure you want to delete this file? This action cannot be undone.
               </p>
               <div className="flex justify-end">
@@ -73,7 +73,7 @@ export function FileRow(props: { file: typeof files_table.$inferSelect }) {
                   ref={cancelButtonRef}
                   onClick={() => setIsDeleteModalOpen(false)}
                   variant="outline"
-                  className="mr-2 border-gray-300 hover:bg-gray-50"
+                  className="mr-2 border-gray-300 hover:bg-gray-50 text-xs sm:text-sm"
                 >
                   Cancel
                 </Button>
@@ -82,7 +82,7 @@ export function FileRow(props: { file: typeof files_table.$inferSelect }) {
                     await deleteFile(file.fileKey);
                     setIsDeleteModalOpen(false);
                   }}
-                  className="bg-red-600 hover:bg-red-700 text-white"
+                  className="bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm"
                 >
                   Delete
                 </Button>
@@ -122,41 +122,41 @@ export function FolderRow(props: { folder: typeof folders_table.$inferSelect}) {
     }, [isDeleteModalOpen])
     
     return (
-        <li key={folder.id} className="px-6 py-4 border-b border-gray-200 hover:bg-gray-100">
-        <div className="grid grid-cols-12 gap-4 items-center">
-          <div className="col-span-6 flex items-center">
+        <li key={folder.id} className="px-3 sm:px-6 py-3 sm:py-4 border-b border-gray-200 hover:bg-gray-100">
+        <div className="grid grid-cols-12 gap-2 sm:gap-4 items-center">
+          <div className="col-span-6 flex items-center min-w-0">
               <Link
                 href={`/f/${folder.id}`}
-                className="flex items-center text-gray-800 hover:text-green-600"
+                className="flex items-center text-gray-800 hover:text-green-600 truncate"
               >
-                <FolderIcon className="mr-3 text-green-600" size={20} />
-                {folder.name}
+                <FolderIcon className="mr-2 sm:mr-3 flex-shrink-0 text-green-600" size={18} />
+                <span className="truncate text-sm sm:text-base">{folder.name}</span>
               </Link>
           </div>
-          <div className="col-span-2 text-gray-500">folder</div>
-          <div className="col-span-3 text-gray-500"></div>
-          <div className="col-span-1 text-gray-500">
+          <div className="col-span-2 text-gray-500 text-xs sm:text-sm hidden sm:block">folder</div>
+          <div className="col-span-4 sm:col-span-3 text-gray-500 text-xs sm:text-sm"></div>
+          <div className="col-span-2 sm:col-span-1 text-gray-500 flex justify-end sm:justify-start">
             <Button
               variant="ghost"
               onClick={() => setIsDeleteModalOpen(true)}
               aria-label="Delete folder"
-              className="hover:text-green-600 hover:bg-green-50"
+              className="hover:text-green-600 hover:bg-green-50 p-1 sm:p-2 h-auto"
             >
-              <Trash2Icon size={20} />
+              <Trash2Icon size={18} />
             </Button>
           </div>
         </div>
         
         {isDeleteModalOpen && (
           <div 
-            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 px-4"
             role="dialog"
             aria-labelledby="delete-folder-title"
             aria-modal="true"
           >
-            <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-              <h2 id="delete-folder-title" className="text-lg font-medium mb-4 text-gray-800">Delete Folder</h2>
-              <p className="mb-4 text-gray-600">
+            <div className="bg-white p-4 sm:p-6 rounded-lg shadow-lg w-full max-w-md">
+              <h2 id="delete-folder-title" className="text-base sm:text-lg font-medium mb-3 sm:mb-4 text-gray-800">Delete Folder</h2>
+              <p className="mb-4 text-sm sm:text-base text-gray-600">
                 Are you sure you want to delete this folder? This action will also delete all files and folders inside it and cannot be undone.
               </p>
               <div className="flex justify-end">
@@ -164,7 +164,7 @@ export function FolderRow(props: { folder: typeof folders_table.$inferSelect}) {
                   ref={cancelButtonRef}
                   onClick={() => setIsDeleteModalOpen(false)}
                   variant="outline"
-                  className="mr-2 border-gray-300 hover:bg-gray-50"
+                  className="mr-2 border-gray-300 hover:bg-gray-50 text-xs sm:text-sm"
                 >
                   Cancel
                 </Button>
@@ -173,7 +173,7 @@ export function FolderRow(props: { folder: typeof folders_table.$inferSelect}) {
                     await deleteFolder(folder.id);
                     setIsDeleteModalOpen(false);
                   }}
-                  className="bg-red-600 hover:bg-red-700 text-white"
+                  className="bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm"
                 >
                   Delete
                 </Button>
