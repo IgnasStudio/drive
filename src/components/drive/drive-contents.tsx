@@ -1,21 +1,20 @@
 "use client";
 
-import { ChevronRight, FolderPlus, ChevronLeft } from "lucide-react"
-import { FileRow, FolderRow } from "./file-row"
-import type { files_table, folders_table } from "~/server/db/schema"
+import { ChevronRight, FolderPlus, ChevronLeft } from "lucide-react";
+import { FileRow, FolderRow } from "./file-row";
+import type { files_table, folders_table } from "~/server/db/schema";
 import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { createFolder } from "~/server/actions";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
-import { CustomUploadButton } from "~/components/custom-upload-button";
+import { UploadButtonComponent } from "~/components/ui/upload-button";
 
 export default function DriveContents(props: {
   files: (typeof files_table.$inferSelect)[];
   folders: (typeof folders_table.$inferSelect)[];
   parents: (typeof folders_table.$inferSelect)[];
-
   currentFolderId: number;
 }) {
   const navigate = useRouter();
@@ -104,7 +103,7 @@ export default function DriveContents(props: {
           </ul>
         </div>
         <div className="mt-4 sm:mt-6 flex justify-center">
-          <CustomUploadButton folderId={props.currentFolderId} />
+          <UploadButtonComponent folderId={props.currentFolderId} />
         </div>
         <div className="mt-4 sm:mt-6 flex justify-center">
           <Button 
@@ -160,6 +159,5 @@ export default function DriveContents(props: {
         )}
       </div>
     </div>
-  )
+  );
 }
-

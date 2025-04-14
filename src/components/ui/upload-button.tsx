@@ -1,14 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { UploadButton } from "./uploadthing";
+import { UploadButton } from "../uploadthing";
 import styles from "./upload-button.module.css";
 
-interface CustomUploadButtonProps {
+interface UploadButtonProps {
   folderId: number;
 }
 
-export function CustomUploadButton({ folderId }: CustomUploadButtonProps) {
+export function UploadButtonComponent({ folderId }: UploadButtonProps) {
   const navigate = useRouter();
   
   return (
