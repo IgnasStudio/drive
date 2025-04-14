@@ -14,6 +14,7 @@ A file management application built with Next.js, featuring secure file storage 
 
 ## Todo
 
+- Better error handling
 - Sharing files and folders with other users
 - Toast notifications for success/error feedback
 - Support for more file types beyond images
