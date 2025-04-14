@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import AccessDenied from "~/components/access-denied";
 
-export default async function GoogleDriveClone(props: { params: Promise<{ folderId: string }> }) {
+export default async function IgnasStudioDrive(props: { params: Promise<{ folderId: string }> }) {
     const params = await props.params;
     const session = await auth();
     

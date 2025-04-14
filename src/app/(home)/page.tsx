@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { Button } from "~/components/ui/button";
 
-export default async function GoogleDriveClone() {
+export default async function IgnasStudioDrive() {
   return (
     <div className="container mx-auto px-4 py-16 flex flex-col items-center justify-center text-center w-full">
       <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
