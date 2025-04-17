@@ -11,12 +11,12 @@ A file management application built with Next.js, featuring secure file storage 
 - Visual file browser with size display
 - Breadcrumb navigation
 - Parent folder navigation
+- Better error handling
+- Toast notifications for success/error feedback
 
 ## Todo
 
-- Better error handling
 - Sharing files and folders with other users
-- Toast notifications for success/error feedback
 - Support for more file types beyond images
 - Dynamic file type detection and icons
 - Rename files and folders
