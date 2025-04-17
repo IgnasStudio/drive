@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, FolderPlus, ChevronLeft } from "lucide-react";
+import { ChevronRight, FolderPlus, ChevronLeft, Loader2 } from "lucide-react";
 import { FileRow, FolderRow } from "./file-row";
 import type { files_table, folders_table } from "~/server/db/schema";
 import Link from "next/link";
@@ -10,6 +10,7 @@ import { createFolder } from "~/server/actions";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { UploadButtonComponent } from "~/components/ui/upload-button";
+import { useToast } from "~/components/ui/toast/toast-provider";
 
 export default function DriveContents(props: {
   files: (typeof files_table.$inferSelect)[];
@@ -20,6 +21,8 @@ export default function DriveContents(props: {
   const navigate = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
+  const { addToast } = useToast();
 
   // Find the parent folder for the back button
   // Ensure we have a valid parent folder
@@ -30,10 +33,26 @@ export default function DriveContents(props: {
   const isRootFolder = props.parents.length <= 1;
   
   const handleCreateFolder = async () => {
-    await createFolder(newFolderName, props.currentFolderId);
-    setIsDialogOpen(false);
-    setNewFolderName("");
-    navigate.refresh();
+    try {
+      setIsCreating(true);
+      await createFolder(newFolderName, props.currentFolderId);
+      setIsDialogOpen(false);
+      setNewFolderName("");
+      navigate.refresh();
+      addToast({
+        variant: "success",
+        title: "Folder created",
+        description: `Folder "${newFolderName}" was created successfully.`
+      });
+    } catch (error) {
+      addToast({
+        variant: "error",
+        title: "Failed to create folder",
+        description: error instanceof Error ? error.message : "An unexpected error occurred"
+      });
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   return (
@@ -148,10 +167,13 @@ export default function DriveContents(props: {
                 </Button>
                 <Button 
                   onClick={async () => await handleCreateFolder()} 
-                  disabled={!newFolderName}
+                  disabled={!newFolderName || isCreating}
                   className="bg-gradient-to-r from-[#22c55e] to-[#059669] hover:from-[#1eb874] hover:to-[#047857] text-white text-sm sm:text-base"
                 >
-                  Create
+                  {isCreating ?  <>
+                      <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                      Creating...
+                    </> : "Create"}
                 </Button>
               </div>
             </div>

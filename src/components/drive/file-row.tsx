@@ -1,15 +1,20 @@
-import { FolderIcon, FileIcon, Trash2Icon } from "lucide-react"
+import { FolderIcon, FileIcon, Trash2Icon, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { Button } from "~/components/ui/button"
 import { deleteFile, deleteFolder } from "~/server/actions"
 import type { files_table, folders_table } from "~/server/db/schema"
 import { formatFileSize } from "~/lib/utils"
 import { useEffect, useRef, useState } from "react"
+import { useRouter } from "next/navigation"
+import { useToast } from "~/components/ui/toast/toast-provider"
 
 export function FileRow(props: { file: typeof files_table.$inferSelect }) {
     const { file } = props
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+    const [isDeleting, setIsDeleting] = useState(false)
     const cancelButtonRef = useRef<HTMLButtonElement>(null)
+    const router = useRouter()
+    const { addToast } = useToast()
     
     // Handle ESC key press to close modal
     useEffect(() => {
@@ -32,6 +37,29 @@ export function FileRow(props: { file: typeof files_table.$inferSelect }) {
             window.removeEventListener("keydown", handleKeyDown)
         }
     }, [isDeleteModalOpen])
+    
+    const handleDeleteFile = async () => {
+        try {
+            setIsDeleting(true)
+            await deleteFile(file.fileKey)
+            setIsDeleteModalOpen(false)
+            router.refresh()
+            addToast({
+                variant: "success",
+                title: "File deleted",
+                description: `File "${file.name}" was deleted successfully.`
+            })
+        } catch (error) {
+            setIsDeleteModalOpen(false)
+            addToast({
+                variant: "error",
+                title: "Failed to delete file",
+                description: error instanceof Error ? error.message : "An unexpected error occurred"
+            })
+        } finally {
+            setIsDeleting(false)
+        }
+    }
     
     return (
         <li key={file.id} className="px-3 sm:px-6 py-3 sm:py-4 border-b border-gray-200 hover:bg-gray-100">
@@ -74,17 +102,23 @@ export function FileRow(props: { file: typeof files_table.$inferSelect }) {
                   onClick={() => setIsDeleteModalOpen(false)}
                   variant="outline"
                   className="mr-2 border-gray-300 hover:bg-gray-50 text-xs sm:text-sm"
+                  disabled={isDeleting}
                 >
                   Cancel
                 </Button>
                 <Button
-                  onClick={async () => {
-                    await deleteFile(file.fileKey);
-                    setIsDeleteModalOpen(false);
-                  }}
+                  onClick={handleDeleteFile}
                   className="bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm"
+                  disabled={isDeleting}
                 >
-                  Delete
+                  {isDeleting ? (
+                    <>
+                      <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                      Deleting...
+                    </>
+                  ) : (
+                    "Delete"
+                  )}
                 </Button>
               </div>
             </div>
@@ -97,7 +131,10 @@ export function FileRow(props: { file: typeof files_table.$inferSelect }) {
 export function FolderRow(props: { folder: typeof folders_table.$inferSelect}) {
     const { folder } = props
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+    const [isDeleting, setIsDeleting] = useState(false)
     const cancelButtonRef = useRef<HTMLButtonElement>(null)
+    const router = useRouter()
+    const { addToast } = useToast()
     
     // Handle ESC key press to close modal
     useEffect(() => {
@@ -120,6 +157,29 @@ export function FolderRow(props: { folder: typeof folders_table.$inferSelect}) {
             window.removeEventListener("keydown", handleKeyDown)
         }
     }, [isDeleteModalOpen])
+    
+    const handleDeleteFolder = async () => {
+        try {
+            setIsDeleting(true)
+            await deleteFolder(folder.id)
+            setIsDeleteModalOpen(false)
+            router.refresh()
+            addToast({
+                variant: "success",
+                title: "Folder deleted",
+                description: `Folder "${folder.name}" and its contents were deleted successfully.`
+            })
+        } catch (error) {
+            setIsDeleteModalOpen(false)
+            addToast({
+                variant: "error",
+                title: "Failed to delete folder",
+                description: error instanceof Error ? error.message : "An unexpected error occurred"
+            })
+        } finally {
+            setIsDeleting(false)
+        }
+    }
     
     return (
         <li key={folder.id} className="px-3 sm:px-6 py-3 sm:py-4 border-b border-gray-200 hover:bg-gray-100">
@@ -165,17 +225,23 @@ export function FolderRow(props: { folder: typeof folders_table.$inferSelect}) {
                   onClick={() => setIsDeleteModalOpen(false)}
                   variant="outline"
                   className="mr-2 border-gray-300 hover:bg-gray-50 text-xs sm:text-sm"
+                  disabled={isDeleting}
                 >
                   Cancel
                 </Button>
                 <Button
-                  onClick={async () => {
-                    await deleteFolder(folder.id);
-                    setIsDeleteModalOpen(false);
-                  }}
+                  onClick={handleDeleteFolder}
                   className="bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm"
+                  disabled={isDeleting}
                 >
-                  Delete
+                  {isDeleting ? (
+                    <>
+                      <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                      Deleting...
+                    </>
+                  ) : (
+                    "Delete"
+                  )}
                 </Button>
               </div>
             </div>
