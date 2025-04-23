@@ -28,6 +28,7 @@
     "@radix-ui/react-slot": "^1.1.2",
     "@t3-oss/env-nextjs": "^0.10.1",
     "@uploadthing/react": "^7.3.0",
+    "babel-plugin-react-compiler": "^19.1.0-rc.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.7",
