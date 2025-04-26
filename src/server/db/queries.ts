@@ -61,6 +61,7 @@ export const MUTATIONS = {
       url: string;
       parent: number;
       fileKey: string; 
+      fileType: string;
     };
     userId: string;
   }) {
@@ -79,11 +80,6 @@ export const MUTATIONS = {
     const rootFolderId = rootFolder[0]!.id;
 
     await db.insert(folderSchema).values([
-      {
-        name: "Trash",
-        parent: rootFolderId,
-        ownerId: userId,
-      },
       {
         name: "Shared",
         parent: rootFolderId,

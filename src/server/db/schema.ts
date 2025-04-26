@@ -9,6 +9,7 @@ export const files_table = createTable("files_table", {
   size: int("size").notNull(),
   fileKey: text("file_key").notNull(),
   url: text("url").notNull(), 
+  fileType: text("file_type").notNull(),
   parent: bigint("parent", { mode: "number", unsigned: true}).notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 }, (tempTable) => {

@@ -16,7 +16,7 @@ export function UploadButtonComponent({ folderId }: UploadButtonProps) {
   return (
     <div className={styles.customUploadButton}>
       <UploadButton
-        endpoint="imageUploader"
+        endpoint="fileUploader"
         onClientUploadComplete={(res) => {
           if (res && res.length > 0) {
             const fileCount = res.length;

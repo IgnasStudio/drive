@@ -7,11 +7,31 @@ const f = createUploadthing();
 
 export const ourFileRouter = {
 
-  imageUploader: f({
+  fileUploader: f({
     image: {
       maxFileSize: "4MB",
       maxFileCount: 1,
     },
+    pdf: {
+      maxFileSize: "8MB",
+      maxFileCount: 1,
+    },
+    text: {
+      maxFileSize: "2MB",
+      maxFileCount: 1,
+    },
+    audio: {
+      maxFileSize: "8MB",
+      maxFileCount: 1,
+    },
+    video: {
+      maxFileSize: "16MB",
+      maxFileCount: 1,
+    },
+    blob: {
+      maxFileSize: "8MB",
+      maxFileCount: 1,
+    }
   }).input(z.object({
     folderId: z.number(),
   }),
@@ -36,6 +56,10 @@ export const ourFileRouter = {
       console.log("metadata", metadata);
       console.log("file", file);
       console.log("file url", file.ufsUrl);
+      
+      // Extract file extension from file name
+      const fileExtension = file.name.split('.').pop()?.toLowerCase() || '';
+      
       await MUTATIONS.createFile({
         file: {
             name: file.name,
@@ -43,6 +67,7 @@ export const ourFileRouter = {
             url: file.ufsUrl,
             parent: metadata.parentId, 
             fileKey: file.key, // This is the key that Uploadthing uses to identify the file
+            fileType: fileExtension,
             },
             userId: metadata.userId,
         });

@@ -3,7 +3,7 @@ import Link from "next/link"
 import { Button } from "~/components/ui/button"
 import { deleteFile, deleteFolder } from "~/server/actions"
 import type { files_table, folders_table } from "~/server/db/schema"
-import { formatFileSize } from "~/lib/utils"
+import { formatFileSize, getReadableFileType } from "~/lib/utils"
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useToast } from "~/components/ui/toast/toast-provider"
@@ -61,6 +61,9 @@ export function FileRow(props: { file: typeof files_table.$inferSelect }) {
         }
     }
     
+    // Get the file's readable type
+    const fileType = file.fileType ? getReadableFileType(file.fileType) : "File";
+    
     return (
         <li key={file.id} className="px-3 sm:px-6 py-3 sm:py-4 border-b border-gray-200 hover:bg-gray-100">
         <div className="grid grid-cols-12 gap-2 sm:gap-4 items-center">
@@ -70,7 +73,7 @@ export function FileRow(props: { file: typeof files_table.$inferSelect }) {
                 <span className="truncate text-sm sm:text-base">{file.name}</span>
               </a>
           </div>
-          <div className="col-span-2 text-gray-500 text-xs sm:text-sm hidden sm:block">{"file"}</div>
+          <div className="col-span-2 text-gray-500 text-xs sm:text-sm hidden sm:block">{fileType}</div>
           <div className="col-span-4 sm:col-span-3 text-gray-500 text-xs sm:text-sm">{formatFileSize(file.size)}</div>
           <div className="col-span-2 sm:col-span-1 text-gray-500 flex justify-end sm:justify-start">
             <Button
