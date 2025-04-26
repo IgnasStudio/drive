@@ -23,7 +23,7 @@ jest.mock('@clerk/nextjs/server', () => ({ auth: jest.fn() }));
 jest.mock('next/navigation', () => ({ redirect: jest.fn() }));
 
 // Mock drive contents component
-jest.mock('~/components/drive/drive-contents', () => ({
+jest.mock('~/components/drive/contents/DriveContents', () => ({
   __esModule: true,
   default: () => <div data-testid="drive-contents">Drive Contents</div>,
 }));
