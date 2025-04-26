@@ -1,4 +1,4 @@
-import DriveContents from "~/components/drive/drive-contents";
+import DriveContents from "~/components/drive/contents/DriveContents";
 import { QUERIES } from "~/server/db/queries";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";

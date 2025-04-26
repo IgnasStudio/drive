@@ -13,13 +13,13 @@ A file management application built with Next.js, featuring secure file storage 
 - Parent folder navigation
 - Better error handling
 - Toast notifications for success/error feedback
+- Support for more file types beyond images
+- Dynamic file type detection
+- Move files between folders
 
 ## Todo
 
 - Sharing files and folders with other users
-- Support for more file types beyond images
-- Dynamic file type detection and icons
 - Rename files and folders
-- Move files between folders
 - Copy files and folders
 - Batch operations

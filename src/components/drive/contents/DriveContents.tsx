@@ -1,60 +1,45 @@
 "use client";
 
 import { ChevronRight, FolderPlus, ChevronLeft, Loader2 } from "lucide-react";
-import { FileRow, FolderRow } from "./file-row";
+import { FileRow } from "../files/FileRow";
+import { FolderRow } from "../folders/FolderRow";
 import type { files_table, folders_table } from "~/server/db/schema";
 import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { createFolder } from "~/server/actions";
-import { useState } from "react";
-import { Button } from "~/components/ui/button";
-import { UploadButtonComponent } from "~/components/ui/upload-button";
-import { useToast } from "~/components/ui/toast/toast-provider";
+import { Button } from "~/components/ui/Button";
+import { UploadButtonComponent } from "~/components/ui/Upload-button";
+import { useFolderCreate } from "../hooks/useFolderCreate";
 
-export default function DriveContents(props: {
+interface DriveContentsProps {
   files: (typeof files_table.$inferSelect)[];
   folders: (typeof folders_table.$inferSelect)[];
   parents: (typeof folders_table.$inferSelect)[];
   currentFolderId: number;
-}) {
+}
+
+export default function DriveContents({ files, folders, parents, currentFolderId }: DriveContentsProps) {
   const navigate = useRouter();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [newFolderName, setNewFolderName] = useState("");
-  const [isCreating, setIsCreating] = useState(false);
-  const { addToast } = useToast();
+  
+  // Extract folder creation logic into a dedicated hook
+  const { 
+    isDialogOpen, 
+    isCreating, 
+    newFolderName, 
+    setNewFolderName,
+    openDialog, 
+    closeDialog, 
+    handleCreateFolder 
+  } = useFolderCreate(currentFolderId);
 
   // Find the parent folder for the back button
-  // Ensure we have a valid parent folder
-  const parentFolder = props.parents.length > 1 
-    ? props.parents[props.parents.length - 2] 
-    : props.parents[0] ?? null;
+  // Ensure there is a valid parent folder
+  const parentFolder = parents.length > 1 
+    ? parents[parents.length - 2] 
+    : parents[0] ?? null;
     
-  const isRootFolder = props.parents.length <= 1;
+  const isRootFolder = parents.length <= 1;
   
-  const handleCreateFolder = async () => {
-    try {
-      setIsCreating(true);
-      await createFolder(newFolderName, props.currentFolderId);
-      setIsDialogOpen(false);
-      setNewFolderName("");
-      navigate.refresh();
-      addToast({
-        variant: "success",
-        title: "Folder created",
-        description: `Folder "${newFolderName}" was created successfully.`
-      });
-    } catch (error) {
-      addToast({
-        variant: "error",
-        title: "Failed to create folder",
-        description: error instanceof Error ? error.message : "An unexpected error occurred"
-      });
-    } finally {
-      setIsCreating(false);
-    }
-  };
-
   return (
     <div className="text-gray-800 px-4 sm:px-8 py-4 sm:py-8 h-full w-full">
       <div className="max-w-6xl mx-auto">
@@ -62,12 +47,12 @@ export default function DriveContents(props: {
           <div className="flex flex-wrap items-center mb-3 sm:mb-0">
            {/* My Drive will always lead to the first parent, which is the root folder */}
             <Link
-              href={`/f/${props.parents[0]?.id}`}
+              href={`/f/${parents[0]?.id}`}
               className="text-gray-800 hover:text-green-600 mr-2 font-medium"
             >
               My Drive
             </Link>
-            {props.parents?.map((folder, _index) => (
+            {parents?.map((folder, _index) => (
               <div key={folder.id} className="flex items-center">
                 <ChevronRight className="mx-1 sm:mx-2 text-gray-500" size={16} />
                 <Link
@@ -113,20 +98,20 @@ export default function DriveContents(props: {
             </div>
           </div>
           <ul className="rounded-b-lg overflow-hidden">
-          {props.folders.map((folder) => (
+          {folders.map((folder) => (
               <FolderRow key={folder.id} folder={folder} />
             ))}
-            {props.files.map((file) => (
+            {files.map((file) => (
               <FileRow key={file.id} file={file} />
             ))}
           </ul>
         </div>
         <div className="mt-4 sm:mt-6 flex justify-center">
-          <UploadButtonComponent folderId={props.currentFolderId} />
+          <UploadButtonComponent folderId={currentFolderId} />
         </div>
         <div className="mt-4 sm:mt-6 flex justify-center">
           <Button 
-            onClick={() => setIsDialogOpen(true)}
+            onClick={openDialog}
             className="bg-gradient-to-r from-[#22c55e] to-[#059669] hover:from-[#1eb874] hover:to-[#047857] text-white text-sm sm:text-base"
           >
             <FolderPlus className="mr-2" size={16} />
@@ -151,7 +136,7 @@ export default function DriveContents(props: {
                 autoFocus
                 onKeyDown={async (e) => {
                   if (e.key === "Escape") {
-                    setIsDialogOpen(false);
+                    closeDialog();
                   } else if (e.key === "Enter" && newFolderName) {
                     await handleCreateFolder();
                   }
@@ -159,7 +144,7 @@ export default function DriveContents(props: {
               />
               <div className="flex justify-end">
                 <Button 
-                  onClick={() => setIsDialogOpen(false)} 
+                  onClick={closeDialog} 
                   variant="outline"
                   className="mr-2 border-gray-300 hover:bg-gray-50 text-sm sm:text-base"
                 >

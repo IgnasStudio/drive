@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { UploadButton } from "../uploadthing";
 import styles from "./upload-button.module.css";
-import { useToast } from "~/components/ui/toast/toast-provider";
+import { useToast } from "~/components/ui/toast/Toast-provider";
 
 interface UploadButtonProps {
   folderId: number;

@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState, useCallback } from "react";
-import { Toast, type ToastProps } from "./toast";
+import { Toast, type ToastProps } from "./Toast";
 
 type ToastType = Omit<ToastProps, "onClose">;
 

@@ -143,3 +143,54 @@ export async function deleteFolder(folderId: number) {
     return { error: "Failed to delete folder" };
   }
 }
+
+export async function moveFile(fileId: number, newParentFolderId: number) {
+  const session = await auth();
+  if (!session.userId) {
+    return { error: "Unauthorized" };
+  }
+
+  try {
+    // Check if file exists and belongs to current user
+    const [file] = await db
+      .select()
+      .from(files_table)
+      .where(
+        and(eq(files_table.id, fileId), eq(files_table.ownerId, session.userId)),
+      );
+
+    if (!file) {
+      return { error: "File not found" };
+    }
+
+    // Check if destination folder exists and belongs to current user
+    const [folder] = await db
+      .select()
+      .from(folders_table)
+      .where(
+        and(eq(folders_table.id, newParentFolderId), eq(folders_table.ownerId, session.userId)),
+      );
+
+    if (!folder) {
+      return { error: "Destination folder not found" };
+    }
+
+    // Update file's parent folder
+    await db
+      .update(files_table)
+      .set({ parent: newParentFolderId })
+      .where(eq(files_table.id, fileId));
+
+    // Hack to update the content on the page
+    const c = await cookies();
+    c.set("force-refresh", JSON.stringify(Math.random()));
+
+    return { 
+      success: true,
+      message: `File "${file.name}" moved successfully.`
+    };
+  } catch (error) {
+    console.error("Error moving file:", error);
+    return { error: "Failed to move file" };
+  }
+}

@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { Button } from "~/components/ui/button";
+import { Button } from "~/components/ui/Button";
 
 export default async function IgnasStudioDrive() {
   return (
