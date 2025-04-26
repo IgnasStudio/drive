@@ -58,7 +58,7 @@ export const ourFileRouter = {
       console.log("file url", file.ufsUrl);
       
       // Extract file extension from file name
-      const fileExtension = file.name.split('.').pop()?.toLowerCase() || '';
+      const fileExtension = file.name.split('.').pop()?.toLowerCase() ?? '';
       
       await MUTATIONS.createFile({
         file: {

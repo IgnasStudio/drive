@@ -80,5 +80,5 @@ export function getReadableFileType(fileType: string): string {
     'cpp': 'C++ File',
   };
   
-  return typeMap[fileType.toLowerCase()] || `${fileType.toUpperCase()} File`;
+  return typeMap[fileType.toLowerCase()] ?? `${fileType.toUpperCase()} File`;
 }
