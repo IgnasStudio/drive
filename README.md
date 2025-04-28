@@ -19,6 +19,8 @@ A file management application built with Next.js, featuring secure file storage 
 
 ## Todo
 
+
+- Set up tests for moving files 
 - Sharing files and folders with other users
 - Rename files and folders
 - Copy files and folders
