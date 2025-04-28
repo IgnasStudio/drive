@@ -45,10 +45,12 @@ export function useFileMove(fileId: number, fileName: string, currentFolderId: n
         const data = await response.json() as { folders: (typeof folders_table.$inferSelect)[] };
         
         if (data.folders) {
-          // Filter out the current folder to avoid moving to the same folder
-          setAvailableFolders(data.folders.filter((folder) => 
-            folder.id !== currentFolderId
-          ));
+          // Filter out the current folder to avoid moving to the same folder and sort by ID
+          const filteredFolders = data.folders
+            .filter((folder) => folder.id !== currentFolderId)
+            .sort((a, b) => a.id - b.id);
+            
+          setAvailableFolders(filteredFolders);
         }
       } catch (error) {
         console.error('Error fetching folders:', error);
